@@ -1,0 +1,6 @@
+requests>=2.31.0
+pytrends>=4.9.2
+pandas>=2.2.2
+numpy>=1.26.4
+tqdm>=4.66.2
+python-dotenv>=1.0.1
