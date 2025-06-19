@@ -14,7 +14,6 @@ Output:
 import json
 import pandas as pd
 from datetime import datetime
-# import os
 
 
 batch_date = datetime.now().strftime('%Y_%m_%d')

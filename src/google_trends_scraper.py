@@ -98,7 +98,6 @@ def get_trend_score_1y_loop(artist_name, geo):
     last_day = calendar.monthrange(year, month)[1]
     end_date = datetime(year, month, last_day)
     start_date = end_date - timedelta(days=364)
-    # chunk_size = 30  # Google allows up to ~270 days of daily granularity
 
     combined_scores = {}
 

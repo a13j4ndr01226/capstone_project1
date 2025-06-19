@@ -15,20 +15,17 @@ This script:
 import json
 import time
 import random
+from datetime import datetime
 from pathlib import Path
 from src.google_trends_scraper import get_trend_score_1y_loop
 from src.utils.trends_cache import load_cache, save_cache
 
-INPUT_FILE = Path("data/spotify_rising_artists.json")
-OUTPUT_FILE = Path("data/spotify_rising_with_trends.jsonl")
+# batch_date = datetime.now().strftime('%Y_%m_%d')
+batch_date = '2025_06_18'
 
-    # us_states = [
-    #     'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-    #     'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-    #     'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-    #     'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-    #     'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
-    # ]
+INPUT_FILE = Path(f"data/spotify_rising_artists_{batch_date}.json")
+OUTPUT_FILE = Path(f"data/spotify_rising_with_trends_{batch_date}.jsonl")
+
 #Add or change regions as needed. Current project focuses on the Atlantic City Area.
 regions = {
         "AL": "US-AL", "AK": "US-AK", "AZ": "US-AZ", "AR": "US-AR", "CA": "US-CA", "CO": "US-CO", "CT": "US-CT", "DE": "US-DE", "FL": "US-FL", "GA": "US-GA",
