@@ -28,6 +28,9 @@ venv/
 data/cache/
 *.db
 
-# Files too large to upload to github
+# unnecessary csv files
 data/artist_trend_scores_1year_full_us.csv
+data/artist_trend_scores_1year.csv
 data/artist_trend_scores_final.csv
+data/spotify_rising_artists_2025_06_08.csv
+data/spotify_rising_artists_2025_06_18.csv
