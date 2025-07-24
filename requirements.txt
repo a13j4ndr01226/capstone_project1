@@ -4,3 +4,5 @@ pandas>=2.2.2
 numpy>=1.26.4
 tqdm>=4.66.2
 python-dotenv>=1.0.1
+jupyter>=1.0.0
+spotipy>=2.25.1
