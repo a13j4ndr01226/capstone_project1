@@ -15,8 +15,12 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 # Set the path to the .env file in the config/ directory
-dotenv_path = Path(__file__).resolve().parent.parent / "config" / ".env"
+dotenv_path = Path(__file__).resolve().parent.parent.parent / "config" / ".env"
 load_dotenv(dotenv_path=dotenv_path)
+
+# print("DEBUG - CLIENT ID:", os.getenv("SPOTIFY_CLIENT_ID"))
+# print("DEBUG - Using .env path:", dotenv_path)
+
 
 def get_token():
     """

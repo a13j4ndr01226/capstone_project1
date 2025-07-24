@@ -9,7 +9,7 @@ import requests
 import time
 from datetime import datetime
 from src.utils.get_genre import get_artist_genres
-from src.auth import get_auth_headers
+from src.utils.auth import get_auth_headers
 from src.utils.dedup_artists import deduplicate_artists
 
 def scrape_spotify_created_playlists(playlist_id, playlist_name, headers, max_retries=3):

@@ -17,7 +17,7 @@ import time
 import random
 from datetime import datetime
 from pathlib import Path
-from src.google_trends_scraper import get_trend_score_1y_loop
+from src.utils.google_trends_scraper import get_trend_score_1y_loop
 from src.utils.trends_cache import load_cache, save_cache
 
 # batch_date = datetime.now().strftime('%Y_%m_%d')

@@ -15,13 +15,14 @@ import json
 import sys
 from pathlib import Path
 from datetime import datetime
+from src.utils.json_to_csv import convert_json_to_csv
 import os
 
 # Add src directory to Python path so modules can be imported
 sys.path.append(str(Path(__file__).resolve().parent / "src"))
 
-from spotify_rising_artists import artist_by_playlistIDs
-from utils.genre_cache import load_cache, save_cache 
+from src.utils.spotify_rising_artists import artist_by_playlistIDs
+from src.utils.genre_cache import load_cache, save_cache 
 
 #These are playlists that have "on the rise" artists
 playlist_dict = {
@@ -62,7 +63,11 @@ def main():
 
     print(f"\n Saved {len(artists)} artists to {output_file.resolve()}")
     print("Saving cache...")
-    save_cache()  
+    save_cache()
+
+    print("Converting json to csv...")
+    convert_json_to_csv() #Does not take in any parameters. Assumes json file is saved in path defined above
+    print("Conversion complete.")
 
 if __name__ == "__main__":
     main()

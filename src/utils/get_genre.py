@@ -5,7 +5,7 @@ get_genre.py
 import time
 import random
 import requests
-from utils.genre_cache import get_cached_genres, set_cached_genres
+from src.utils.genre_cache import get_cached_genres, set_cached_genres
 
 def get_artist_genres(artist_id, headers,max_retries=3):
     """
