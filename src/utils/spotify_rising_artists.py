@@ -8,6 +8,7 @@ extract artist data from those playlists, and deduplicate artists across playlis
 import requests
 import time
 from datetime import datetime
+from src.utils.logger_config import logger
 from src.utils.get_genre import get_artist_genres
 from src.utils.auth import get_auth_headers
 from src.utils.dedup_artists import deduplicate_artists
@@ -42,15 +43,15 @@ def scrape_spotify_created_playlists(playlist_id, playlist_name, headers, max_re
             
             elif response.status_code == 429:
                 retry_after = int(response.headers.get("Retry-After", 5))
-                print(f"ERROR: Status Code 429. Sleeping for {retry_after} seconds...")
+                logger.error(f"Status Code 429. Sleeping for {retry_after} seconds...")
                 time.sleep(retry_after)
                 retries += 1
             
             else:
-                raise Exception(f"ERROR: Failed to fetch playlist {playlist_name}. Status: {response.status_code}. Response: {response.text}")
+                raise logger.error(f"Failed to fetch playlist {playlist_name}. Status: {response.status_code}. Response: {response.text}")
         
         else:
-            raise Exception(f"ERROR: Exceeds max retries on playlist {playlist_name} due to repeated 429s.")
+            raise logger.error(f"ERROR: Exceeds max retries on playlist {playlist_name} due to repeated 429s.")
         
         data = response.json()
         items = data.get("items",[])
@@ -89,13 +90,13 @@ def scrape_spotify_created_playlists(playlist_id, playlist_name, headers, max_re
         except (TypeError, KeyError): #Skip over any tracks that are missing artist info or are formatted oddly
             continue
     
-    print(f"Tracks pulled from '{playlist_name}': {len(all_items)}")
+    logger.info(f"Tracks pulled from '{playlist_name}': {len(all_items)}")
 
     return artists
 
 def artist_by_playlistIDs(playlist_dict):
     """
-    Pulls artists directly from known Spotify playlist IDs.
+    Pulls artists directly from known Spotify playlist IDs. 
 
     Args:
         playlist_dict (dict): Dict of {playlist_name: playlist_id}
@@ -108,22 +109,23 @@ def artist_by_playlistIDs(playlist_dict):
 
     all_artists = []
 
+
     for playlist_name, playlist_id in playlist_dict.items():
-        print(f"INFO: Scraping '{playlist_name}' (ID: {playlist_id})")
+        logger.info(f"Scraping '{playlist_name}' (ID: {playlist_id})")
         
         try:
             artists = scrape_spotify_created_playlists(playlist_id, playlist_name, headers)
-            print(f"INFO: Found {len(artists)} artists in '{playlist_name}'")
+            logger.info(f"Found {len(artists)} artists in '{playlist_name}'")
             all_artists.extend(artists)
         
         except Exception as e:
-            print(f"ERROR: Failed to scrape '{playlist_name}': {e}")
+            logger.error(f"Failed to scrape '{playlist_name}': {e}")
         
         time.sleep(1)
 
-    print(f"INFO: Total collected before deduplication: {len(all_artists)}")
+    logger.info(f"Total collected before deduplication: {len(all_artists)}")
 
-    deduped_artists = deduplicate_artists(all_artists)
-    print(f"INFO: Total after deduplication: {len(deduped_artists)}")
+    deduped_artists = deduplicate_artists(all_artists) #dedups artists based on the artist cache? <<<--------------------Check
+    logger.info(f"Total after deduplication: {len(deduped_artists)}")
 
     return deduped_artists

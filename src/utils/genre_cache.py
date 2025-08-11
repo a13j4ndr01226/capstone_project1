@@ -2,7 +2,7 @@
 genre_cache.py
 
 Stores genre data associated with Spotify artist IDs. 
-This helps reduce redundant API calls.
+This helps reduce redundant API calls
 """
 
 import json

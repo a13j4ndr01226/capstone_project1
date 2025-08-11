@@ -10,19 +10,19 @@ This script:
 - Saves the scraped data in JSON format
 - Updates the cache after execution
 """
-
+import os
 import json
 import sys
 from pathlib import Path
 from datetime import datetime
 from src.utils.json_to_csv import convert_json_to_csv
-import os
+from src.utils.logger_config import logger
+from src.utils.genre_cache import load_cache, save_cache
+from src.utils.spotify_rising_artists import artist_by_playlistIDs
+
 
 # Add src directory to Python path so modules can be imported
 sys.path.append(str(Path(__file__).resolve().parent / "src"))
-
-from src.utils.spotify_rising_artists import artist_by_playlistIDs
-from src.utils.genre_cache import load_cache, save_cache 
 
 #These are playlists that have "on the rise" artists
 playlist_dict = {
@@ -50,24 +50,24 @@ batch_date = datetime.now().strftime('%Y_%m_%d')
 output_file = Path(f"data/spotify_rising_artists_{batch_date}.json")
 
 def main():
-    print("Loading cache...")
+    logger.info("Loading cache...")
     load_cache() 
-    print("Collecting artists from rising playlists...")
+    logger.info("Collecting artists from rising playlists...")
     
     artists = artist_by_playlistIDs(playlist_dict)
 
-    output_file.parent.mkdir(exist_ok=True)  # Create /data if missing
+    output_file.parent.mkdir(exist_ok=True)  # Create data folder if missing
     
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(artists, f, indent=2)
 
-    print(f"\n Saved {len(artists)} artists to {output_file.resolve()}")
-    print("Saving cache...")
+    logger.info(f"\n Saved {len(artists)} artists to {output_file.resolve()}")
+    logger.info("Saving cache...")
     save_cache()
 
-    print("Converting json to csv...")
+    logger.info("Converting json to csv...")
     convert_json_to_csv() #Does not take in any parameters. Assumes json file is saved in path defined above
-    print("Conversion complete.")
+    logger.info("Conversion complete.")
 
 if __name__ == "__main__":
     main()

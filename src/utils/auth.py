@@ -13,6 +13,7 @@ import base64
 from requests import post
 from dotenv import load_dotenv
 from pathlib import Path
+from src.utils.logger_config import logger
 
 # Set the path to the .env file in the config/ directory
 dotenv_path = Path(__file__).resolve().parent.parent.parent / "config" / ".env"
@@ -39,7 +40,7 @@ def get_token():
     client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 
     if not client_id or not client_secret: 
-        raise Exception("ERROR: Missing client_id or client_secret in environment variables.")
+        raise logger.error("Missing client_id or client_secret in environment variables.")
     
     auth_string = f"{client_id}:{client_secret}"
     auth_bytes = auth_string.encode("utf-8")
@@ -56,7 +57,7 @@ def get_token():
 
     # helpful for debugging
     if response.status_code != 200:
-        raise Exception(f"ERROR: Failed to authenticate. Status Code: {response.status_code}. Response Text: {response.text}")
+        raise logger.error(f"Failed to authenticate. Status Code: {response.status_code}. Response Text: {response.text}")
     
     return response.json().get("access_token")
 
