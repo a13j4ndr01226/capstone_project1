@@ -24,14 +24,10 @@ venv/
 *.db
 
 #logs
-logs/*
+logs/
 
 #data/ directory
-data/cache/
-data/fabricated_data/
-data/stage1_artists/
-data/stage2_trend_enrichment/
-data/transformed/
+data/
 
 
 
