@@ -19,7 +19,7 @@ def convert_json_to_csv():
     batch_date = datetime.now().strftime('%Y_%m_%d')
 
     # File paths
-    input_path = rf"C:/Users/Aleja/Documents/Data_Engineering/springboard/capstone_project1/data/spotify_rising_artists_{batch_date}.json"
+    input_path = rf"C:/Users/Aleja/Documents/Data_Engineering/springboard/capstone_project1/data/stage1_artists/spotify_rising_artists_{batch_date}.json"
     output_path = input_path.replace(".json", ".csv")
 
     # Load JSON file

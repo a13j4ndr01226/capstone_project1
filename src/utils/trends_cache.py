@@ -14,7 +14,7 @@ Functions:
 import json
 from pathlib import Path
 
-CACHE_FILE = Path("data/cache/trend_score_cache.json")
+CACHE_FILE = Path("data/cache/trend_score_cache.json") #economy
 trend_cache = {}
 
 def load_cache():
