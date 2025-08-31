@@ -16,6 +16,7 @@ __pycache__/
 .venv/
 venv/
 .env/
+config/.env
 
 # OS metadata
 .DS_Store
@@ -28,6 +29,8 @@ logs/
 
 #data/ directory
 data/
+
+#.ev
 
 
 
