@@ -13,7 +13,7 @@ import calendar
 import threading
 from datetime import date, datetime, timedelta
 from pytrends.request import TrendReq
-from src.utils.logger_config import logger
+from src.utils.logger_config import get_logger
 from src.utils.trends_cache import get_cached_score, set_cached_score
 
 # ------------------ Tuning Defaults ------------------
@@ -31,6 +31,7 @@ __penalty_seconds = 300.0     # 5 minutes global cool-down on first 429
 
 
 STOP_EVENT: threading.Event | None = None  # will be installed by artists_enricher
+logger = get_logger("Extract_Artist_Enricher")
 
 def install_stop_event(ev: threading.Event):
     """Call this once from artists_enricher so this module can see the same flag."""

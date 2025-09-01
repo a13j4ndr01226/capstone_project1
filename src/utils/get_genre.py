@@ -5,8 +5,10 @@ get_genre.py
 import time
 import random
 import requests
-from src.utils.logger_config import logger
+from src.utils.logger_config import get_logger
 from src.utils.genre_cache import get_cached_genres, set_cached_genres
+
+logger = get_logger("Extract_Artist_Scraper")
 
 def get_artist_genres(artist_id, headers,max_retries=3):
     """

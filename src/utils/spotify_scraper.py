@@ -9,11 +9,13 @@ extract artist data from those playlists, and deduplicate artists across playlis
 import requests
 import time
 from datetime import datetime
-from src.utils.logger_config import logger
+from src.utils.logger_config import get_logger
 from src.utils.get_genre import get_artist_genres
 from src.utils.auth import get_auth_headers
 from src.utils.dedup_artists import deduplicate_artists
 from src.utils.genre_cache import get_cached_genres, set_cached_genres
+
+logger = get_logger("Extract_Artist_Scraper")
 
 def scrape_spotify_created_playlists(playlist_id, playlist_name, headers, max_retries=3):
     """
