@@ -11,7 +11,7 @@ that will bring in ticket sales and host artists that are on the rise at a bette
 > Batch Ingestion Set Up: Complete
 > Data Exploration: Complete
 > Data Cleaning and Transformation Logic: Complete
-> Set Up Transformation Pipeline: Pending
+> Set Up Transformation Pipeline: Complete
 
 See:
 - [`data_exploration_summary.md`](./data_exploration/data_exploration_summary.md)  
@@ -22,36 +22,62 @@ See:
 
 capstone_project1/
 │
+├── env/ -- stores sensitive variables
+├── data/ -- stores caches and persisted data from different points of the pipeline
+├── data_exploration/
+│   ├── data_exploration_summary.md
+│   ├── data_exploration.jpynb
+│   ├── data_storage_strategy.md 
+├── ERD
+│   ├── ERD_Normalized + Analytical Views.png
 ├── src/
-│   ├── utils/
-│   │   ├── add_genre.py
-│   │   ├── add_timestamp.py
-│   │   ├── auth.py
-│   │   ├── count_artists.py
-│   │   ├── dedup_artists.py
-│   │   ├── genre_cahce.py
-│   │   ├── get_genre.py
-│   │   ├── google_trends_scraper.py
-│   │   ├── json_to_csv.py
-│   │   ├── normalize.py
-│   │   ├── spotify_rising_artists.py
-│   │   └── trends_cache.py
-│   ├── artists_enricher.py
-│   └── artists_scraper.py
+│   ├── S1_extract/
+│   │   ├── artist_scraper.py
+│   │   ├── artist_enricher.py
+│   │   ├── extract.py
+│   ├── S2_transform/
+│   │   ├── dim_persist.py
+│   │   ├── transform.py
+│   ├── S3_load/
+│   │   ├── load.py
+│   └── utils/
+│       ├── add_genre.py
+│       ├── add_timestamp.py
+│       ├── auth.py
+│       ├── confirm_dir_exists.py
+│       ├── count_artists.py
+│       ├── dedup_artists.py
+│       ├── find_latest_file.py
+│       ├── genre_cache.py
+│       ├── get_genre.py
+│       ├── google_trends_scraper.py
+│       ├── json_to_csv.py
+│       ├── jsonl_to_csv.py
+│       ├── logger_config.py
+│       ├── normalize.py
+│       ├── spotify_rising_artists.py
+│       └── trends_cache.py
+├── main.py
 ├── proposal.md
 ├── requirements.txt
 ├── README.md
 └── LICENSE
 
 Notes: 
-- 'artists_scraper.py' and 'artists_enricher.py' are the 2 main codes for extraction.
-- Currently data samples are not included in repo but wil be added for reference
+- Running 'main.py' script will run the entire extract, transform, and load pipeline
 
 ## Before Running it
 
 1. Create a `.env` file and save it under a folder config/ in the project root to store your API keys:
-SPOTIFY_CLIENT_ID=your_spotify_client_id
-SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
+    SPOTIFY_CLIENT_ID=your_spotify_client_id
+    SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
+    POSTGRES_USER= ****
+    POSTGRES_PASSWORD=****
+    POSTGRES_HOST=localhost
+    POSTGRES_PORT=****
+    POSTGRES_DB=capstone_project1
+    POSTGRES_SCHEMA_STAGING=staging
+    POSTGRES_TABLE_STAGING=stg_spotify_artist_trend_scores
 
 2. Install dependencies:
 pip install -r requirements.txt
@@ -61,13 +87,12 @@ may trigger temporary blocks.
 
 ## How to use it
 
-1. Run the Spotify scraper to extract rising artists by genre and region
-    python artists._scraper.py
+1. Run the main.py to run the entire pipeline
+    a. Alternatively each step can be ran separately using: extract.py, transform.py, and load.py
 
-2. Run the Google Trends enricher to get daily interst scores for those artists
-    python artists_enricher.py
+2. Output files will be saved in their corresponding directories based on the date the scripts are run
 
-3. Output files will be saved in the data/ directory
+3. Log files are similary stored in ther separate logs/ directory
 
 
 ## Data Exploration Highlights
@@ -105,9 +130,12 @@ requests – for API interaction
 
 dotenv – for managing credentials
 
+SQLAlchemy - for database connection between python and PostgreSQL
+
 tqdm – for progress feedback
 
 mathplotlib and seaborn - for data exploration
+
 ## License
 
 This project is licensed under the MIT License.
