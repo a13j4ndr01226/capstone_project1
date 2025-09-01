@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+src/s3_load/load_raw_data.py
 
 
 # VS Code
@@ -29,9 +30,6 @@ logs/
 
 #data/ directory
 data/
-
-#.ev
-
 
 
 
