@@ -290,9 +290,9 @@ def transform(paths: TransformPaths) -> None:
         .csv(str(raw_path))
     )
 
-    if os.getenv("SPARK_TEST_MODE") == "1":
-        logger.info("Running in test mode. Input is row-limited.")
-    df_raw = df_raw.limit(100_000)
+    # if os.getenv("SPARK_TEST_MODE") == "1":
+    #     logger.info("Running in test mode. Input is row-limited.")
+    #     df_raw = df_raw.limit(100_000)
 
     logger.info(f"[READ] raw rows (uncounted until action): columns={df_raw.columns}")
 
