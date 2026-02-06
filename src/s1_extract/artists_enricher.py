@@ -6,7 +6,7 @@ from pathlib import Path
 from src.utils.jsonl_to_csv import convert_jsonl_to_csv
 from src.utils.logger_config import get_logger
 from src.utils.trends_cache import load_cache, save_cache, get_cached_score
-from src.utils.google_trends_scraper import get_trend_score_last_complete_month, install_stop_event
+from utils.scrape_google_trends import get_trend_score_last_complete_month, install_stop_event
 from src.utils.confirm_dir_exists import ensure_dir
 
 logger = get_logger("Extract_Artist_Enricher")

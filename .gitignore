@@ -12,12 +12,14 @@ src/s3_load/load_raw_data.py
 # Bytecode and cache
 __pycache__/
 *.pyc
+__init__.py
 
 # Virtual environments
 .venv/
 venv/
 .env/
-config/.env
+config/
+.env
 
 # OS metadata
 .DS_Store
@@ -31,7 +33,12 @@ logs/
 #data/ directory
 data/
 
+.gitignore
 
+#Unused transform logic
+src/s2_transform/dim_persist.py
+src/s2_transform/spark_local_job.py
+src/s2_transform/validate_local_spark_job.py
 
 
 

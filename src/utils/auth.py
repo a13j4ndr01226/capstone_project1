@@ -19,9 +19,6 @@ from src.utils.logger_config import get_logger
 dotenv_path = Path(__file__).resolve().parent.parent.parent / "config" / ".env"
 load_dotenv(dotenv_path=dotenv_path)
 
-# print("DEBUG - CLIENT ID:", os.getenv("SPOTIFY_CLIENT_ID"))
-# print("DEBUG - Using .env path:", dotenv_path)
-
 logger = get_logger("Extract_Artist_Scraper")
 
 def get_token():
