@@ -50,8 +50,8 @@ logger = get_logger("Spark_Transform")
 def build_spark(app_name: str = "capstone-transform-spark") -> SparkSession:
     spark = SparkSession.builder.appName(app_name).getOrCreate()
 
-    storage_account = os.getenv("AZURE_STORAGE_ACCOUNT")
-    storage_key = os.getenv("AZURE_STORAGE_KEY")
+    storage_account = os.getenv("AZURE-STORAGE-ACCOUNT")
+    storage_key = os.getenv("AZURE-STORAGE-KEY")
 
     if storage_account and storage_key:
         configure_wasbs_account_key(spark, storage_account, storage_key)
