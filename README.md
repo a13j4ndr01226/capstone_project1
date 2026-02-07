@@ -7,11 +7,13 @@ the trend of emerging artists in local areas will help event venues and promoter
 that will bring in ticket sales and host artists that are on the rise at a better prices.
 
 ## Status
-> Raw Data Extraction: Complete
-> Batch Ingestion Set Up: Complete
-> Data Exploration: Complete
-> Data Cleaning and Transformation Logic: Complete
-> Set Up Transformation Pipeline: Complete
+> Raw Data Extraction: Complete  
+> Batch Ingestion Set Up: Complete  
+> Data Exploration: Complete  
+> Data Cleaning and Transformation Logic: Complete  
+> Set Up Transformation Pipeline: Complete  
+> **Scaled Execution (Azure Databricks + PySpark): Complete**
+
 
 See:
 - [`data_exploration_summary.md`](./data_exploration/data_exploration_summary.md)  
@@ -105,6 +107,20 @@ See data_exploration_summary.md
 - Multi-genre entries exploded to one genre per row
 - Cleaning and deduplication ensure 1 row per artist × genre × location × date
 
+## Scaled Execution (Step 6 – Cloud Prototype)
+
+As part of Step 6 of the capstone, the existing transformation pipeline was scaled to run on
+cloud-based distributed compute using Apache Spark and Azure infrastructure.
+
+Key aspects of this step:
+
+- Existing pandas-based transformation logic was migrated to **PySpark DataFrames**
+- All original business rules and validation logic were preserved
+- Execution was performed on a **cost-controlled Azure Databricks Spark cluster**
+- **Azure Blob Storage** is used as the system of record for both inputs and outputs
+- Transformed outputs are written as **partitioned Parquet files** for cloud efficiency
+- Transformation metrics (row counts, invalid values, dropped records) are logged to verify correctness
+
 ## Storage Strategy
 
 See data_storage_strategy.md
@@ -135,6 +151,15 @@ SQLAlchemy - for database connection between python and PostgreSQL
 tqdm – for progress feedback
 
 mathplotlib and seaborn - for data exploration
+
+Apache Spark (PySpark) – distributed processing for cloud-scale transformations
+
+Azure Databricks – managed Spark compute for scalable execution
+
+Azure Blob Storage – cloud persistence layer and system of record
+
+Parquet – columnar storage format for scalable downstream analytics
+
 
 ## License
 
