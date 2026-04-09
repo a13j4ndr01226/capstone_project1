@@ -18,7 +18,6 @@ from pyspark.sql import functions as F
 from pyspark.sql.types import StructType, StructField, StringType
 
 from src.utils.logger_config import get_logger
-from src.utils.azure_blob import configure_wasbs_account_key
 
 # -----------------------------
 # Config
@@ -45,7 +44,7 @@ class TransformPaths:
 logger = get_logger("Spark_Transform")
 
 # -----------------------------
-# Spark bootstrap (Databricks + Azure safe)
+# Spark (Databricks + Azure safe)
 # -----------------------------
 def build_spark(app_name: str = "capstone-transform-spark") -> SparkSession:
     spark = SparkSession.builder.appName(app_name).getOrCreate()
@@ -53,9 +52,15 @@ def build_spark(app_name: str = "capstone-transform-spark") -> SparkSession:
     storage_account = os.getenv("AZURE_STORAGE_ACCOUNT")
     storage_key = os.getenv("AZURE_STORAGE_KEY")
 
-    if storage_account and storage_key:
-        configure_wasbs_account_key(spark, storage_account, storage_key)
-        logger.info("Azure Blob Storage configured")
+    if not storage_account or not storage_key:
+        raise RuntimeError("AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY must be set")
+
+    spark.conf.set(
+        f"fs.azure.account.key.{storage_account}.blob.core.windows.net",
+        storage_key
+    )
+
+    logger.info("Azure Blob Storage access configured via account key")
 
     return spark
 
@@ -98,7 +103,7 @@ def clean_and_validate(df: DataFrame) -> Tuple[DataFrame, Dict[str, int]]:
     logger.info("Normalizing date values.")
     # Date normalize '_' -> '-' and parse,
     date_norm = F.trim(F.regexp_replace(F.col("date").cast("string"), "_", "-"))
-    df = df.withColumn("date_parsed", F.to_date(date_norm, "yyyy-MM-dd"))
+    df = df.withColumn("date_parsed", F.try_to_date(date_norm, "yyyy-MM-dd"))
 
     # Base counts
     rows_in = df.count()

@@ -121,6 +121,57 @@ Key aspects of this step:
 - Transformed outputs are written as **partitioned Parquet files** for cloud efficiency
 - Transformation metrics (row counts, invalid values, dropped records) are logged to verify correctness
 
+## Step 8 – Testing Deployment and Validation
+
+As part of Step 8, the project was validated in a test-style deployment workflow to confirm that both the utility logic and core PySpark transformation logic behave as expected before productionization.
+
+### Testing Setup
+
+- Created a project-local Python virtual environment for isolated test execution
+- Added `pytest` and `pytest-cov` for test execution and coverage reporting
+- Added local PySpark-based tests to validate Spark transformation logic outside Databricks
+- Used `PYTHONPATH=.` during local test execution so project modules could be imported consistently
+
+### Test Coverage Scope
+
+The Step 8 test suite currently covers:
+
+- Utility functions:
+  - `normalize_text`
+  - `deduplicate_artists`
+- Core PySpark transformation logic:
+  - `clean_and_validate`
+  - `explode_genres`
+
+### Edge Cases Covered
+
+- whitespace trimming and lowercase normalization
+- punctuation, symbol, and emoji removal
+- duplicate artist ID handling
+- missing genre defaults
+- invalid date handling
+- null and out-of-range trend score handling
+- dropping rows missing required fields
+- multi-genre parsing and explosion
+- delimiter normalization for `;`, `|`, and `,`
+- dropping empty genre tokens
+
+### Current Test Results
+
+- **Passed tests:** 12
+- **Failed tests:** 0
+- **Overall coverage:** 15%
+
+### Key Testing/Deployment Adjustments Made
+
+- Resolved local test environment setup with a dedicated `venv`
+- Installed and configured local PySpark for transformation testing
+- Fixed local Spark session configuration for pytest
+- Resolved local Spark environment conflicts caused by an older standalone Spark installation
+- Updated date parsing behavior in the PySpark cleaning logic to safely handle invalid dates during testing
+
+This testing step complements the Azure Databricks execution completed in Step 6: Databricks validates cloud execution and Blob integration, while the Step 8 test suite validates transformation correctness and edge-case handling locally before production deployment.
+
 ## Storage Strategy
 
 See data_storage_strategy.md
