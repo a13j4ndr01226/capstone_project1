@@ -75,6 +75,35 @@ def _extract_batch_date_from_filename(name: str) -> Optional[str]:
     )
     return m.group(1) if m else None
 
+def discover_latest_raw_path(spark: SparkSession, raw_root: str) -> str:
+    # list all matching CSVs under dated subfolders
+    candidates = (
+        spark.read.format("binaryFile")
+        .option("pathGlobFilter", "spotify_rising_with_trends_*.csv")
+        .load(f"{raw_root.rstrip('/')}/*")
+        .select("path")
+        .collect()
+    )
+
+    if not candidates:
+        raise FileNotFoundError(f"No matching raw CSV files found under {raw_root}")
+
+    paths = [row["path"] for row in candidates]
+
+    dated = []
+    for p in paths:
+        name = p.split("/")[-1]
+        batch_date = _extract_batch_date_from_filename(name)
+        if batch_date:
+            dated.append((batch_date, p))
+
+    if not dated:
+        raise ValueError("Matching files found, but none had a valid batch_date filename")
+
+    dated.sort(key=lambda x: x[0], reverse=True)
+    return dated[0][1]
+
+
 # -----------------------------
 # Core transforms (mirror pandas logic)
 # -----------------------------
@@ -271,21 +300,22 @@ def write_transform_parquet(df: DataFrame, transform_root: str, batch_date: str)
 def transform(paths: TransformPaths) -> None:
     spark = build_spark()
 
-    # Override 
     override = os.getenv("TRANSFORM_ONE_OFF_INPUT")
+    raw_root = os.getenv("RAW_ROOT")
 
-    if not override:
-        raise RuntimeError(
-            "TRANSFORM_ONE_OFF_INPUT must be set when running in Databricks"
-        )
+    if override:
+        raw_path = override
+        logger.info(f"[INPUT] Using override path: {raw_path}")
+    else:
+        if not raw_root:
+            raise RuntimeError("RAW_ROOT must be set when TRANSFORM_ONE_OFF_INPUT is not provided")
+        raw_path = discover_latest_raw_path(spark, raw_root)
+        logger.info(f"[INPUT] Auto-discovered latest raw path: {raw_path}")
 
-    raw_path = override
     batch_date = _extract_batch_date_from_filename(raw_path.split("/")[-1])
 
     if not batch_date:
         raise ValueError(f"Cannot extract batch_date from {raw_path}")
-
-    logger.info(f"[INPUT] {raw_path}")
 
     # Read CSV (schema locked for parity)
     df_raw = (

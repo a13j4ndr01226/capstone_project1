@@ -17,7 +17,7 @@ sys.path.append(str(Path(__file__).resolve().parent / "src"))
 
 from src.utils.json_to_csv import convert_json_to_csv
 from src.utils.genre_cache import load_cache, save_cache
-from utils.scrape_playlist import artist_by_playlistIDs
+from src.utils.scrape_playlist import artist_by_playlistIDs
 from src.utils.logger_config import get_logger
 from src.utils.confirm_dir_exists import ensure_dir
 

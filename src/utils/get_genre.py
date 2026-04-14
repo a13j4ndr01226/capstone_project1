@@ -22,11 +22,11 @@ def get_artist_genres(artist_id, headers,max_retries=3):
     Returns:
         list (str): List of genres associated with the artist
     """
-    time.sleep(random.uniform(1.5, 2.5)) #rate limiting delay
-
     cached = get_cached_genres(artist_id) 
     if cached is not None: #If the artist ID exists in the cache, it returns the cached genres immediately and does not make an API call
         return cached
+
+    time.sleep(random.uniform(1.5, 2.5)) #rate limiting delay
 
     url = f"https://api.spotify.com/v1/artists/{artist_id}"
     

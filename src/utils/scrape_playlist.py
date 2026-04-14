@@ -34,10 +34,10 @@ def scrape_spotify_created_playlists(playlist_id, playlist_name, headers, max_re
     limit = 50
     offset = 0 
     all_items = []    
-    retries = 0
-
+    
     while True:
         url = f"{base_url}?limit={limit}&offset={offset}"
+        retries = 0    
         
         while retries <= max_retries:
             response = requests.get(url, headers=headers)
@@ -52,9 +52,13 @@ def scrape_spotify_created_playlists(playlist_id, playlist_name, headers, max_re
                 retries += 1
             
             else:
-                raise logger.error(
-                    f"Failed to fetch playlist {playlist_name}."
+                logger.error(
+                    f"Failed to fetch playlist {playlist_name}. "
                     f"Status: {response.status_code}. Response: {response.text}"
+                )
+                raise RuntimeError(
+                    f"Failed to fetch playlist {playlist_name}: "
+                    f"status={response.status_code}"
                 )
         
         else:
@@ -144,7 +148,7 @@ def artist_by_playlistIDs(playlist_dict):
         
         else:
             genres = get_artist_genres(artist_id, headers)
-            set_cached_genres(artist_id, genres)
+            # set_cached_genres(artist_id, genres)
             cache_misses += 1
 
         enriched.append({**a, "genres": genres})
