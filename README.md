@@ -172,6 +172,50 @@ The Step 8 test suite currently covers:
 
 This testing step complements the Azure Databricks execution completed in Step 6: Databricks validates cloud execution and Blob integration, while the Step 8 test suite validates transformation correctness and edge-case handling locally before production deployment.
 
+## Step 9 – Deploy Production Code & Process Dataset
+
+As part of Step 9, the production PySpark transformation pipeline was deployed and executed on fresh Azure Databricks compute in alignment with the Step 7 deployment architecture.
+
+### Production Deployment Setup
+- Created a fresh Azure Databricks compute cluster for the Step 9 run
+- Used Databricks Runtime 16.4 LTS with Apache Spark 3.5.2
+- Configured a single-node `Standard_D4s_v3` cluster with Photon enabled
+- Enabled auto-termination after 10 minutes of inactivity as a cost-control measure
+- Connected the production transform job to Azure Blob Storage using environment-based configuration
+
+### Production Execution Improvements
+The Step 6 Spark transformation job was updated to support a more production-like execution flow:
+- `TRANSFORM_ONE_OFF_INPUT` remains available only as an optional override
+- normal runs now use `RAW_ROOT` to automatically discover the latest raw CSV in Azure Blob Storage
+- this removed the need to manually point the transform job to a specific input file during standard execution
+
+### Production Run
+The deployed Spark job successfully:
+- auto-discovered the latest raw input file in Azure Blob Storage
+- processed the full raw dataset using PySpark on Azure Databricks
+- applied the cleaning and genre explosion transformation logic
+- wrote partitioned Parquet output back to Azure Blob Storage
+
+**Input path**
+`wasbs://oe-container@spotimusicstorage.blob.core.windows.net/data/raw/2026_04_14/spotify_rising_with_trends_2026_04_14.csv`
+
+**Output path**
+`wasbs://oe-container@spotimusicstorage.blob.core.windows.net/data/transformed/2026_04_14/spotify_rising_cleaned_2026_04_14`
+
+### Production Run Metrics
+- Rows in: `1,473,492`
+- Rows written: `2,143,836`
+- Bad dates: `0`
+- Out-of-range trend scores: `0`
+- Dropped missing id/location/date: `0`
+- Rows after genre explosion: `2,143,836`
+- Dropped empty genres: `0`
+
+### Final Notes
+- Azure Blob Storage served as both the raw input source and transformed output target
+- Databricks compute was used only for processing and was terminated after execution to control cloud cost
+- This step completed the production deployment and end-to-end processing requirement for the cloud transformation portion of the capstone
+
 ## Storage Strategy
 
 See data_storage_strategy.md
