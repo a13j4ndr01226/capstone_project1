@@ -132,7 +132,7 @@ def clean_and_validate(df: DataFrame) -> Tuple[DataFrame, Dict[str, int]]:
     logger.info("Normalizing date values.")
     # Date normalize '_' -> '-' and parse,
     date_norm = F.trim(F.regexp_replace(F.col("date").cast("string"), "_", "-"))
-    df = df.withColumn("date_parsed", F.try_to_date(date_norm, "yyyy-MM-dd"))
+    df = df.withColumn("date_parsed", F.to_date(date_norm, "yyyy-MM-dd"))
 
     # Base counts
     rows_in = df.count()
