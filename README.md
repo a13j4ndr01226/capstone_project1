@@ -2,100 +2,175 @@
 
 ## Objective
 
-This project will identify where new and emerging artists are being searched for and listened to. Identifying 
-the trend of emerging artists in local areas will help event venues and promoters negotiate contracts
-that will bring in ticket sales and host artists that are on the rise at a better prices.
+This project identifies where new and emerging artists are being searched for and listened to. Identifying trend signals for emerging artists in local areas can help event venues and promoters negotiate contracts that drive ticket sales while booking talent earlier and at lower cost.
+
+---
+
+## Executive Summary
+
+This capstone evolved from a local end-to-end ETL prototype into a cloud-scaled analytical pipeline.
+
+The final production submission uses:
+
+- Azure Blob Storage for raw and transformed persistence
+- Azure Databricks for scalable PySpark transformations
+- Parquet outputs for downstream analytics
+- Azure Monitor Workbook dashboards for operational monitoring
+
+The resulting dataset helps identify artists and genres trending in specific locations over time.
+
+---
 
 ## Status
+
 > Raw Data Extraction: Complete  
 > Batch Ingestion Set Up: Complete  
 > Data Exploration: Complete  
 > Data Cleaning and Transformation Logic: Complete  
 > Set Up Transformation Pipeline: Complete  
-> **Scaled Execution (Azure Databricks + PySpark): Complete**
-
+> Scaled Execution (Azure Databricks + PySpark): Complete  
+> Testing & Validation: Complete  
+> Production Deployment: Complete  
+> Monitoring Dashboard: Complete  
 
 See:
-- [`data_exploration_summary.md`](./data_exploration/data_exploration_summary.md)  
-- [`data_storage_strategy.md`](./data_exploration/data_storage_strategy.md)  
+
+- [`data_exploration_summary.md`](./data_exploration/data_exploration_summary.md)
+- [`data_storage_strategy.md`](./data_exploration/data_storage_strategy.md)
 - [`ERD_Normalized_Analytical_Views.png`](./ERD/ERD_Normalized_Analytical_Views.png)
+
+---
+
+## Dataset Characteristics
+
+### Sources
+
+- Spotify API — identifies rising artists through curated playlists
+- Google Trends — measures regional search interest over time
+
+### Analytical Grain
+
+artist × genre × location × date
+
+### Data Characteristics
+
+- Time-series popularity data
+- Regional market signals
+- Multi-genre artists exploded into atomic rows
+- Millions of transformed records
+- Designed for trend analysis and location comparisons
+
+---
+
+## Final Pipeline Components
+
+### Azure Blob Storage
+
+Used as the cloud system of record for:
+
+- raw extracted files
+- transformed analytical outputs
+- partitioned production datasets
+
+### Azure Databricks
+
+Used for scalable PySpark transformation workloads including:
+
+- cleansing
+- validation
+- normalization
+- genre explosion logic
+- production dataset generation
+
+### Parquet
+
+Used as the final transformed format because it is:
+
+- compressed
+- columnar
+- query efficient
+- scalable
+
+### Azure Monitor Workbook
+
+Used to monitor production storage activity including:
+
+- transactions
+- used capacity
+- ingress
+- egress
+
+---
+
+## Final Architecture Notes
+
+Earlier iterations of the project included PostgreSQL as a relational serving layer using the local ETL workflow.
+
+The final cloud submission prioritizes scalable transformation and curated Parquet outputs in Azure Blob Storage, representing a modern lake-oriented analytical architecture.
+
+The earlier PostgreSQL load logic remains in the repository to demonstrate complete ETL design considerations.
+
+---
 
 ## Project Structure
 
 capstone_project1/
-│
-├── env/ -- stores sensitive variables
-├── data/ -- stores caches and persisted data from different points of the pipeline
-├── data_exploration/
-│   ├── data_exploration_summary.md
-│   ├── data_exploration.jpynb
-│   ├── data_storage_strategy.md 
-├── ERD
-│   ├── ERD_Normalized + Analytical Views.png
-├── src/
-│   ├── S1_extract/
-│   │   ├── artist_scraper.py
-│   │   ├── artist_enricher.py
-│   │   ├── extract.py
-│   ├── S2_transform/
-│   │   ├── dim_persist.py
-│   │   ├── transform.py
-│   ├── S3_load/
-│   │   ├── load.py
-│   └── utils/
-│       ├── add_genre.py
-│       ├── add_timestamp.py
-│       ├── auth.py
-│       ├── confirm_dir_exists.py
-│       ├── count_artists.py
-│       ├── dedup_artists.py
-│       ├── find_latest_file.py
-│       ├── genre_cache.py
-│       ├── get_genre.py
-│       ├── google_trends_scraper.py
-│       ├── json_to_csv.py
-│       ├── jsonl_to_csv.py
-│       ├── logger_config.py
-│       ├── normalize.py
-│       ├── spotify_rising_artists.py
-│       └── trends_cache.py
-├── main.py
-├── proposal.md
-├── requirements.txt
-├── README.md
-└── LICENSE
 
-Notes: 
-- Running 'main.py' script will run the entire extract, transform, and load pipeline
+├── env/  
+├── data/  
+├── data_exploration/  
+├── ERD/  
+├── cloud_architecture/  
+├── src/  
+│   ├── S1_extract/  
+│   ├── S2_transform/  
+│   ├── S3_load/  
+│   └── utils/  
+├── tests/  
+├── main.py  
+├── requirements.txt  
+├── README.md  
 
-## Before Running it
+Notes:
 
-1. Create a `.env` file and save it under a folder config/ in the project root to store your API keys:
-    SPOTIFY_CLIENT_ID=your_spotify_client_id
-    SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
-    POSTGRES_USER= ****
-    POSTGRES_PASSWORD=****
-    POSTGRES_HOST=localhost
-    POSTGRES_PORT=****
-    POSTGRES_DB=capstone_project1
-    POSTGRES_SCHEMA_STAGING=staging
-    POSTGRES_TABLE_STAGING=stg_spotify_artist_trend_scores
+- Running `main.py` executes the original local ETL workflow.
+- Azure production transformation jobs are executed through Databricks.
 
-2. Install dependencies:
+---
+
+## Before Running It
+
+### 1. Create `.env`
+
+Store credentials in a config/environment file:
+
+```env
+SPOTIFY_CLIENT_ID=
+SPOTIFY_CLIENT_SECRET=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_HOST=
+POSTGRES_PORT=
+POSTGRES_DB=
+
+### 2. Install dependencies:
+
 pip install -r requirements.txt
 
-3. Ensure internet access and a valid IP address when running the Google Trends portion, as repeated requests 
-may trigger temporary blocks.
+### 3. Internet Access
+
+Ensure internet access and a valid IP address when running the Google Trends portion, as repeated requests may trigger temporary blocks.
 
 ## How to use it
 
-1. Run the main.py to run the entire pipeline
-    a. Alternatively each step can be ran separately using: extract.py, transform.py, and load.py
+### Local Prototype Workflow
 
-2. Output files will be saved in their corresponding directories based on the date the scripts are run
+python main.py
+  Runs: extract.py, pandas_job.py, and load.py
 
-3. Log files are similary stored in ther separate logs/ directory
+### Cloud Workflow 
 
+Production transformations are executed in Azure Databricks using PySpark jobs that read raw files from Azure Blob Storage and write transformed Parquet outputs back to Blob Storaage.
 
 ## Data Exploration Highlights
 
@@ -216,9 +291,36 @@ The deployed Spark job successfully:
 - Databricks compute was used only for processing and was terminated after execution to control cloud cost
 - This step completed the production deployment and end-to-end processing requirement for the cloud transformation portion of the capstone
 
+## Step 10 – Monitoring Dashboard
+
+Azure-native monitoring was implemented using Azure Monitor and Workbook dashboards to provide visibility into production storage activity and overall pipeline health.
+
+### Components Completed
+
+- Registered `Microsoft.Insights` resource provider
+- Created Log Analytics Workspace
+- Created Azure Workbook dashboard
+- Added shareable dashboard access link for review
+
+### Metrics Monitored
+
+- Transactions
+- Used Capacity
+- Ingress
+- Egress
+
+### Purpose
+
+- Validate production environment health
+- Observe storage growth over time
+- Monitor data movement activity
+- Demonstrate operational readiness of the deployed pipeline
+
 ## Storage Strategy
 
 See data_storage_strategy.md
+
+Earlier local relational model included:
 
 - Normalized star schema in PostgreSQL (3NF)
 - dim_artists, dim_genres, dim_locations, artist_genres junction table
@@ -255,6 +357,18 @@ Azure Blob Storage – cloud persistence layer and system of record
 
 Parquet – columnar storage format for scalable downstream analytics
 
+## Future Enhancements
+
+Potential next steps to further evolve this project include:
+
+- Load curated Parquet outputs into a downstream warehouse or serving layer
+- Build Power BI or Tableau dashboards for business users
+- Add workflow orchestration using Apache Airflow
+- Implement incremental batch processing instead of full refreshes
+- Add automated data quality checks and alerting
+- Introduce forecasting models for artist demand and market growth
+- Expand data sources to include ticket sales, streaming counts, or social media signals
+- Evaluate lakehouse architectures for direct cloud querying and analytics
 
 ## License
 
