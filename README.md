@@ -144,7 +144,6 @@ Notes:
 
 Store credentials in a config/environment file:
 
-```env
 SPOTIFY_CLIENT_ID=
 SPOTIFY_CLIENT_SECRET=
 POSTGRES_USER=
